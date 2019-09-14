@@ -6,57 +6,57 @@ USE animalcdb;
 
 # The "type" table tracks the different creature types available
 CREATE TABLE type (
-	type_id		INTEGER		NOT NULL	UNIQUE	AUTO_INCREMENT,		# the type's unique identifier
-	type_name	VARCHAR(45),										# the type name (e.g. bug, fish, deep sea)
-	type_desc	VARCHAR(255),										# brief description of the type
+	type_id		INTEGER		NOT NULL	UNIQUE	AUTO_INCREMENT,	# the type's unique identifier
+	type_name	VARCHAR(45),	# the type name (e.g. bug, fish, deep sea)
+	type_desc	VARCHAR(255),	# brief description of the type
 	PRIMARY KEY(type_id));
 	
 # The "creature" table contains basic attributes related to specific creatures
 CREATE TABLE creature (
-	creature_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,		# the creature's unique identifier
-	creature_name	VARCHAR(45)	NOT NULL	UNIQUE,					# the creature's name (must be unique)
-	type_id		INTEGER,											# indicates what type of creature this is (refers to type table)
-	creature_desc	VARCHAR(255),									# brief description of the creature
-	creature_bells	INTEGER,										# the amount of bells this creature can be sold for
-	creature_rate DECIMAL(6,3),										# appearance rate when the creature is available, stored as percentage
+	creature_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,	# the creature's unique identifier
+	creature_name	VARCHAR(45)	NOT NULL	UNIQUE,	# the creature's name (must be unique)
+	type_id		INTEGER,	# indicates what type of creature this is (refers to type table)
+	creature_desc	VARCHAR(255),	# brief description of the creature
+	creature_bells	INTEGER,	# the amount of bells this creature can be sold for
+	creature_rate DECIMAL(6,3),	# appearance rate when the creature is available, stored as percentage
 	PRIMARY KEY(creature_id),
 	FOREIGN KEY(type_id) references type(type_id) ON UPDATE CASCADE);	
 
 # The "calendar" table tracks the calendar periods, such as months or special places (e.g. the island), that schedules can be built upon
 CREATE TABLE calendar (
 	cal_id	INTEGER	NOT NULL	UNIQUE,		# the calendar's unique identifier
-	cal_name	VARCHAR(45),				# the name of the calendar period
-	cal_desc	VARCHAR(255),				# brief description of the calendar period
+	cal_name	VARCHAR(45),			# the name of the calendar period
+	cal_desc	VARCHAR(255),			# brief description of the calendar period
 	PRIMARY KEY(cal_id));
 
 # The "schedule" table organizes details about a creature's schedule
 CREATE TABLE schedule (
-	sched_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,		# the schedule's unique identifier
-	creature_id	INTEGER	NOT NULL,									# the creature whose schedule this is (references creature table)
-	cal_id	INTEGER	NOT NULL,										# the calendar period of this schedule (references calendar table)
-	sched_allmonth	TINYINT	NOT NULL	DEFAULT 0,					# boolean indicating whether this schedule encompasses all month
-	sched_startday	INTEGER,										# integer indicating the date of the month this schedule starts
-	sched_endday		INTEGER,									# integer indicating the date of the month this schedule ends
-	sched_allday	TINYINT	NOT NULL	DEFAULT 0,					# boolean indicating whether this schedule is all day (24 hours)
-	sched_starttime	TIME,											# time that this schedule starts
-	sched_endtime		TIME,										# time that this schedule ends
+	sched_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,	# the schedule's unique identifier
+	creature_id	INTEGER	NOT NULL,	# the creature whose schedule this is (references creature table)
+	cal_id	INTEGER	NOT NULL,		# the calendar period of this schedule (references calendar table)
+	sched_allmonth	TINYINT	NOT NULL	DEFAULT 0,	# boolean indicating whether this schedule encompasses all month
+	sched_startday	INTEGER,				# integer indicating the date of the month this schedule starts
+	sched_endday		INTEGER,			# integer indicating the date of the month this schedule ends
+	sched_allday	TINYINT	NOT NULL	DEFAULT 0,	# boolean indicating whether this schedule is all day (24 hours)
+	sched_starttime	TIME,					# time that this schedule starts
+	sched_endtime		TIME,				# time that this schedule ends
 	PRIMARY KEY(sched_id),
 	FOREIGN KEY(creature_id) REFERENCES creature(creature_id) ON UPDATE CASCADE,
 	FOREIGN KEY(cal_id) REFERENCES calendar(cal_id) ON UPDATE CASCADE);
 
 # The "user" table stores attributes about the game players who are tracking creatures in this databse
 CREATE TABLE user (
-	user_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,		# the user's unique identifier
-	user_name	VARCHAR(45),									# the user's name
-	user_desc	VARCHAR(255),									# brief description of the user
+	user_id		INTEGER	NOT NULL	UNIQUE	AUTO_INCREMENT,	# the user's unique identifier
+	user_name	VARCHAR(45),		# the user's name
+	user_desc	VARCHAR(255),		# brief description of the user
 	PRIMARY KEY(user_id));
 		
 # The "tag" table allows users to "tag" creatures in the database
 CREATE TABLE tag (
-	creature_id		INTEGER	NOT NULL,		# the id of the tagged creature (references creature table)
-	user_id			INTEGER	NOT NULL,		# the id of the tagging user (references user table)
-	tag_active		BOOL DEFAULT 1,			# whether this tag is "active" (allows old, inactive tags to be saved)
-	tag_desc		VARCHAR(255),			# brief description of this tag
+	creature_id		INTEGER	NOT NULL,	# the id of the tagged creature (references creature table)
+	user_id			INTEGER	NOT NULL,	# the id of the tagging user (references user table)
+	tag_active		BOOL DEFAULT 1,		# whether this tag is "active" (allows old, inactive tags to be saved)
+	tag_desc		VARCHAR(255),		# brief description of this tag
 	PRIMARY KEY(creature_id, user_id),
 	FOREIGN KEY(creature_id) REFERENCES creature(creature_id) ON UPDATE CASCADE,
 	FOREIGN KEY(user_id) REFERENCES user(user_id) ON UPDATE CASCADE);
